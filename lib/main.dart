@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'X-Equis',
+      title: 'Base',
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.poppinsTextTheme(),
       ),
       debugShowCheckedModeBanner: false,
-      routes: AppRoutes.routes,
+      onGenerateRoute: AppRoutes.onGenerateRoute,
       initialRoute: AppRoutes.splash,
     );
   }
