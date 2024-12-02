@@ -95,7 +95,7 @@ class _SignInPageState extends State<SignInPage> {
     if (mounted) {
       Navigator.pop(context);
       if (email == 'admin' && pass == 'admin') {
-        Navigator.pushReplacementNamed(context, AppRoutes.profile);
+        Navigator.pushReplacementNamed(context, AppRoutes.navigation);
       } else {
         context.mShowSnackBar(message: 'Credenciales incorrectas');
       }

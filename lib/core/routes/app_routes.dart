@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../../src/auth/signin/presentation/signin_page.dart';
 import '../../src/auth/signin/presentation/splash_page.dart';
-import '../../src/profile/presentation/profile_page.dart';
+import '../../src/navigation/navigation_page.dart';
 
 abstract class AppRoutes {
   static const String splash = '/splash';
   static const String signIn = '/signIn';
-  static const String profile = '/profile';
+  static const String navigation = '/navigation';
 
   static get onGenerateRoute =>
       (RouteSettings settings) => switch (settings.name) {
             splash => pageRouter(const SplashPage()),
             signIn => pageRouter(const SignInPage()),
-            profile => pageRouter(const ProfilePage()),
+            navigation => pageRouter(const NavigationPage()),
             _ => _errorRoute(),
           };
 
