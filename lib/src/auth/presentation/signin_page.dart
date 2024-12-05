@@ -79,6 +79,19 @@ class _SignInPageState extends State<SignInPage> {
                 textAlign: TextAlign.center,
               ),
             ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('No tienes una cuenta?'),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoutes.signUp);
+                  },
+                  child: const Text('Crear cuenta'),
+                ),
+              ],
+            ),
           ],
         ),
       ),
