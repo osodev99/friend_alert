@@ -37,6 +37,15 @@ class ItemWidget extends StatelessWidget {
                 ),
               ),
             ),
+            const Center(
+              child: Text(
+                'Te envio una notificacion de emergencia',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
