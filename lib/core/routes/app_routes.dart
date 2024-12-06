@@ -6,10 +6,10 @@ import '../../src/auth/presentation/splash_page.dart';
 import '../../src/navigation/navigation_page.dart';
 
 abstract class AppRoutes {
-  static const String splash = '/splash';
-  static const String signIn = '/signIn';
-  static const String signUp = '/signUp';
-  static const String navigation = '/navigation';
+  static const String splash = 'splash';
+  static const String signIn = 'signIn';
+  static const String signUp = 'signUp';
+  static const String navigation = 'navigation';
 
   static get onGenerateRoute =>
       (RouteSettings settings) => switch (settings.name) {

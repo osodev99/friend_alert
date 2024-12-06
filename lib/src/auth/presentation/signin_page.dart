@@ -1,5 +1,11 @@
+import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:x_equis/core/core.dart';
+import 'package:x_equis/core/prefs/app_prefs.dart';
+import 'package:x_equis/src/auth/data/auth_data.dart';
+import 'package:x_equis/src/shared/models/models.dart';
+import 'package:x_equis/src/shared/widgets/phone_text_field.dart';
+import 'package:x_equis/src/shared/widgets/trust_friend_form.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -11,8 +17,10 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   bool isRemember = false;
   final emailCont = TextEditingController();
-  final passCont = TextEditingController();
+  final phoneCont = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  final countryPicker = const FlCountryCodePicker();
+  String phoneDial = '+ 591';
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +53,8 @@ class _SignInPageState extends State<SignInPage> {
             TextFormField(
               controller: emailCont,
               decoration: const InputDecoration(
-                hintText: 'Email',
-                prefixIcon: Icon(Icons.email),
+                hintText: 'Correo electrónico',
+                prefixIcon: Icon(Icons.email_outlined),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -56,18 +64,9 @@ class _SignInPageState extends State<SignInPage> {
               },
             ),
             const SizedBox(height: 12),
-            TextFormField(
-              controller: passCont,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.lock),
-                hintText: 'Password',
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Este campo es requerido';
-                }
-                return null;
-              },
+            PhoneTextField(
+              controller: phoneCont,
+              onPhoneDial: (value) => phoneDial = value ?? '+ 591',
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -100,18 +99,50 @@ class _SignInPageState extends State<SignInPage> {
 
   void _makeLogin() async {
     final email = emailCont.text;
-    final pass = passCont.text;
+    final phone = '${phoneDial.trim()}${phoneCont.text}';
 
     context.showLoadingDialog();
 
-    await Future.delayed(const Duration(seconds: 2));
-    if (mounted) {
-      Navigator.pop(context);
-      if (email == 'admin' && pass == 'admin') {
-        Navigator.pushReplacementNamed(context, AppRoutes.navigation);
-      } else {
+    try {
+      final user = await AuthData.signIn(email: email, phone: phone);
+      await AppPrefs.saveUserJson(json: user.toJson());
+
+      if (mounted) {
+        Navigator.pop(context);
+        _showAddFriendBottomSheet(context);
+        // Navigator.popAndPushNamed(context, AppRoutes.navigation);
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.pop(context);
         context.mShowSnackBar(message: 'Credenciales incorrectas');
       }
     }
+  }
+
+  void _showAddFriendBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return AnimatedPadding(
+          padding: MediaQuery.of(context).viewInsets,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.decelerate,
+          child: TrustFriendForm(
+            onSave: (name, phone) async {
+              final user = UserModel(
+                name: name,
+                phone: phone,
+                email: '',
+              );
+              await AuthData.signUp(user: user);
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
+            },
+          ),
+        );
+      },
+    );
   }
 }

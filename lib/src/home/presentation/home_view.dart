@@ -12,7 +12,10 @@ class HomeView extends StatelessWidget {
     final size = MediaQuery.sizeOf(context);
 
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 48,
+      ),
       child: Column(
         children: [
           Text(
@@ -25,7 +28,7 @@ class HomeView extends StatelessWidget {
             child: ZoomInOutWidget(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.red[200],
+                  color: Colors.red[900],
                   shape: BoxShape.circle,
                 ),
                 width: size.width * 0.8,
@@ -33,7 +36,10 @@ class HomeView extends StatelessWidget {
                 padding: const EdgeInsets.all(28),
                 child: Text(
                   'Enviar nofiticación de emergencia',
-                  style: textTheme.bodyLarge?.copyWith(color: Colors.white),
+                  style: textTheme.bodyLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),

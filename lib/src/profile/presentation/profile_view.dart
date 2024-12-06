@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:x_equis/core/prefs/app_prefs.dart';
+import 'package:x_equis/src/shared/models/models.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -9,7 +11,10 @@ class ProfileView extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 48,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -17,49 +22,76 @@ class ProfileView extends StatelessWidget {
             'Perfil',
             style: textTheme.displaySmall,
           ),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(0),
-              children: [
-                const ListTile(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 0),
-                  title: Text('Nombre'),
-                  subtitle: Text('Hailey Doe'),
-                ),
-                const ListTile(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 0),
-                  title: Text('Correo'),
-                  subtitle: Text('hailey@doe.com'),
-                ),
-                const ListTile(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 0),
-                  title: Text('Telefono'),
-                  subtitle: Text('+591 12345678'),
-                ),
-                const Gap(8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          FutureBuilder(
+            future: AppPrefs.loadUserJson(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final user = UserModel.fromJson(snapshot.data!);
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Telefonos de confianza',
-                      style: textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                      title: const Text('Nombre'),
+                      subtitle: Text(user.name),
                     ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.add),
+                    ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                      title: const Text('Correo'),
+                      subtitle: Text(user.email),
                     ),
+                    ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                      title: const Text('Telefono'),
+                      subtitle: Text(user.phone),
+                    ),
+                    const Gap(8),
                   ],
-                ),
-                const Gap(8),
-                ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-                  title: const Text('Juan Perez'),
-                  onTap: () => _showBottomSheet(context),
-                  trailing: const Icon(Icons.arrow_forward_ios),
-                ),
-              ],
+                );
+              }
+              return const SizedBox(height: 20);
+            },
+          ),
+          Expanded(
+            child: FutureBuilder(
+              future: Future.delayed(const Duration(seconds: 2)),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ListView(
+                    padding: const EdgeInsets.all(0),
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Telefonos de confianza',
+                            style: textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.add),
+                          ),
+                        ],
+                      ),
+                      const Gap(8),
+                      ListTile(
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 0),
+                        title: const Text('Juan Perez'),
+                        onTap: () => _showBottomSheet(context),
+                        trailing: const Icon(Icons.arrow_forward_ios),
+                      ),
+                    ],
+                  );
+                }
+
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
             ),
           ),
         ],

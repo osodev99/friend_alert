@@ -1,8 +1,10 @@
 import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:x_equis/core/core.dart';
+import 'package:x_equis/core/prefs/app_prefs.dart';
 import 'package:x_equis/src/auth/data/auth_data.dart';
 import 'package:x_equis/src/shared/models/models.dart';
+import 'package:x_equis/src/shared/widgets/phone_text_field.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -76,28 +78,9 @@ class _SignUpPageState extends State<SignUpPage> {
               },
             ),
             const SizedBox(height: 12),
-            TextFormField(
+            PhoneTextField(
               controller: phoneCont,
-              decoration: InputDecoration(
-                prefixIcon: IconButton(
-                  onPressed: () async {
-                    final picked = await countryPicker.showPicker(
-                      context: context,
-                    );
-                    phoneDial = picked?.dialCode ?? '+591';
-                    setState(() {});
-                  },
-                  icon: Text(phoneDial),
-                ),
-                hintText: 'Nro. celular',
-              ),
-              keyboardType: TextInputType.phone,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Este campo es requerido';
-                }
-                return null;
-              },
+              onPhoneDial: (value) => phoneDial = value ?? '+ 591',
             ),
             const SizedBox(height: 20),
             Center(
@@ -124,11 +107,16 @@ class _SignUpPageState extends State<SignUpPage> {
     final phone = phoneCont.text;
     final userName = userNameCont.text;
 
-    final user = UserModel(name: userName, email: email, phone: phone);
+    final user = UserModel(
+      name: userName,
+      email: email,
+      phone: '${phoneDial.trim()}$phone',
+    );
 
     context.showLoadingDialog();
     try {
-      await AuthData.signUp(user: user);
+      final newUser = await AuthData.signUp(user: user);
+      await AppPrefs.saveUserJson(json: newUser.toJson());
       if (mounted) {
         Navigator.pop(context);
         context.mShowSnackBar(message: 'Registro exitoso');
